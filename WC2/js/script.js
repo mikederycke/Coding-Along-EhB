@@ -1,53 +1,75 @@
 'use strict';
-// Oefening 5-6
-console.log('script 3 linked!');
+console.log('script linked!');
 
-let student = {
-    name: 'Default name',
-    age: 29,
-    degree: 'DigX',
-    courses: [],
-    setPersonalDetails(details){
-        //The array on the right gets destructured into the variabels on the left
-        //The place of the variabeles determines which data is assigned.
-        //Position 0 in the array controls the name => this.name is set on first position and will take that value.
-        [this.name,this.age,this.degree] = details;
-    },
-    addCourse(...list){//REST operator catches all arguments and bundles them into an array
-        this.courses = [...this.courses, ...list];//spread operator allows for easy concatenation of arrays.
-        this.courses = ['WE', 'WDA','Programming Essentials'];
-    },
-    showStudent(){
+// DONE - We maken op onze html pagina een knop met de naam: Create Student
+// DONE - We voegen een eventlistener toe. We luisteren naar het event click.
+// DONE - Wanneer we klikken op de knop, vragen we alle data op met behulp van de prompts.
+// DONE - Op het einde van de bevraging, maken we een nieuw studentenobject aan.
+//          Ditmaal gebruiken we een constructor functie. Het object slagen we op in een lijst van studenten.
+// DONE - We kunnen op de knop van Create student nogmaals klikken voor het process te herstarten.
+// DONE - We voegen een knop toe aan onze html pagina met de naam: Show students.
+// DONE - Wanneer we hierop klikken printen we de huidige lijst met studenten af op de html pagina.
+
+document.getElementById('create').addEventListener('click', createStudent);
+document.getElementById('show').addEventListener('click', showStudents);
+
+let listOfStudents = [];
+
+function Student(name, age, degree){
+    this.name = name;
+    this.age = age;
+    this.degree = degree;
+    this.courses = [];
+    this.setPersonalDetails = function(details){
+        [this.name, this.age, this.degree] = details;
+    };
+    this.addCourse = function(...list){
+        this.courses = [...this.courses, ...list];
+    };
+    this.showStudent = function(){
         let txt = `My name is ${this.name}. I am ${this.age} years old and follow ${this.degree} at EhB. 
         My courses are: ${this.courses.join(', ')}.`;
 
-        console.log(txt);
+        return txt;
+    };
+
+}
+
+function createStudent() {
+    let data = [];
+    //Using an array, we are storing all the answers as new elements of that array.
+    data.push(prompt('Name?'));
+    data.push(prompt('Age?'));
+    data.push(prompt('Degree?'));
+
+    let student = new Student();
+    student.setPersonalDetails(data);
+
+    while(true){
+        let c = prompt('Course?');
+        if(c){
+           student.addCourse(c);
+        }else{
+            break;
+        }
     }
-};
-let data = [];
-//Using an array, we are storing all the answers as new elements of that array.
-data.push(prompt('Name?'));
-data.push(prompt('Age?'));
-data.push(prompt('Degree?'));
-student.setPersonalDetails(data);
+    //add to list of students
+    listOfStudents.push(student);
 
-//example of using the rest operator: amount of arguments is not fixed
+    console.log(listOfStudents);
 
-student.addCourse('WE', 'WDA');
-student.addCourse('Programming Essentials');
-student.addCourse('Programming Advanced', 'Android', 'iOS', 'Design');
+}
 
-// while(true){
-//     let c = prompt('Course?');
-//     if(c){
-//        student.addCourse(c);
-//     }else{
-//         break;
-//     }
-// }
-student.showStudent();
-
-
+function showStudents(){
+    for(let s of listOfStudents){
+        //Create paragraph
+        let p = document.createElement('p');
+        //Fill with content
+        p.innerHTML = s.showStudent();
+        //Add to Div
+        document.getElementById('content').appendChild(p);
+    }
+}
 
 
 
